@@ -133,6 +133,7 @@ export function EmptyState(props: EmptyStateProps) {
     buttonTxOptions,
     content = preset.content,
     contentTx,
+
     contentTxOptions,
     heading = preset.heading,
     headingTx,

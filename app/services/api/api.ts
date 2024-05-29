@@ -8,8 +8,9 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiFeedResponse } from "./api.types"
+import type { ApiConfig, ApiFeedResponse, ApiSubjectResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
+import type { SubjectSnapshotIn } from "../../models/subject/Subject"
 
 /**
  * Configuring the apisauce instance.
@@ -49,6 +50,7 @@ export class Api {
     const response: ApiResponse<ApiFeedResponse> = await this.apisauce.get(
       `api.json?rss_url=https%3A%2F%2Ffeeds.simplecast.com%2FhEI_f9Dx`,
     )
+    console.log("response: " + response)
 
     // the typical ways to die when calling an api
     if (!response.ok) {
@@ -73,6 +75,40 @@ export class Api {
       }
       return { kind: "bad-data" }
     }
+  }
+
+  async getSubjects(): Promise<{ kind: "ok"; subjects: SubjectSnapshotIn[] } | GeneralApiProblem> {
+    // make the api call
+    try {
+      const response: ApiResponse<ApiSubjectResponse> = await this.apisauce.get(`subjects.json`)
+
+      // the typical ways to die when calling an api
+      if (!response.ok) {
+        const problem = getGeneralApiProblem(response)
+        if (problem) return problem
+      }
+
+      // transform the data into the format we are expecting
+      try {
+        const rawData = response.data
+
+        // This is where we transform the data into the shape we expect for our MST model.
+        const subjects: SubjectSnapshotIn[] =
+          rawData?.subjects.map((raw) => ({
+            ...raw,
+          })) ?? []
+
+        return { kind: "ok", subjects }
+      } catch (e) {
+        if (__DEV__ && e instanceof Error) {
+          console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+        }
+        return { kind: "bad-data" }
+      }
+    } catch (e) {
+      console.log("foo", e)
+    }
+    return { kind: "rejected" }
   }
 }
 

@@ -21,6 +21,16 @@ export interface EpisodeItem {
   categories: string[]
 }
 
+export interface SubjectItem {
+  guid: string
+  name_first: string
+  name_last: string
+}
+
+export interface ApiSubjectResponse {
+  subjects: SubjectItem[]
+}
+
 export interface ApiFeedResponse {
   status: string
   feed: {
