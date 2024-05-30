@@ -8,9 +8,10 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiFeedResponse, ApiSubjectResponse } from "./api.types"
+import type { ApiConfig, ApiFeedResponse, ApiSubjectResponse, ApiTokenResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import type { SubjectSnapshotIn } from "../../models/subject/Subject"
+import { getUniqueId } from "react-native-device-info"
 
 /**
  * Configuring the apisauce instance.
@@ -107,6 +108,28 @@ export class Api {
       }
     } catch (e) {
       console.log("foo", e)
+    }
+    return { kind: "rejected" }
+  }
+
+  async login(email: string, password: string): Promise<GeneralApiProblem | ApiTokenResponse> {
+    // make the api call
+    try {
+      console.log("attempting to login")
+      const deviceId = getUniqueId()
+      console.log("DEVICEID", deviceId)
+      const response: ApiResponse<ApiTokenResponse> = await this.apisauce.post(`api/login`, {
+        email,
+        password,
+        deviceId,
+      })
+      console.log("attempted to login?")
+      console.log("response:", response)
+      if (response.data?.token) {
+        return { token: response.data.token }
+      }
+    } catch (e) {
+      console.error("Failed to login:", e)
     }
     return { kind: "rejected" }
   }

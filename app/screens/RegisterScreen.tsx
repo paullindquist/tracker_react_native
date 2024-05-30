@@ -22,13 +22,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
 
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields. Like, a "save my username" functionality??
-    /*
+    // and pre-fill the form fields.
     setAuthEmail("ignite@infinite.red")
     setAuthPassword("ign1teIsAwes0m3")
-    */
-    setAuthEmail("paul.lindquist@gmail.com")
-    setAuthPassword("1234")
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
@@ -45,14 +41,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
 
     if (validationError) return
 
-    console.log("Attempting to login")
-    console.log("EMAIL:", authEmail)
-    console.log("PASSWORD", authPassword)
-    const token = api.login(authEmail, authPassword)
-    console.log("TOKEN!!!", token)
+    api.login(authEmail, authPassword)
     /*
 
-    setAuthToken(token)
     // Make a request to your server to get an authentication token.
     // If successful, reset the fields and set the token.
     setIsSubmitted(false)
@@ -127,8 +118,6 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         preset="reversed"
         onPress={login}
       />
-      <Text tx="loginScreen.noAccount"></Text>
-      <Text tx="loginScreen.registerHere"></Text>
     </Screen>
   )
 })

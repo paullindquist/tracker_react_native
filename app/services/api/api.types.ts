@@ -31,6 +31,10 @@ export interface ApiSubjectResponse {
   subjects: SubjectItem[]
 }
 
+export interface ApiTokenResponse {
+  token: string
+}
+
 export interface ApiFeedResponse {
   status: string
   feed: {
