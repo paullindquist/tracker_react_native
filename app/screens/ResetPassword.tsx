@@ -5,9 +5,7 @@ import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
-import { ApiTokenResponse, api } from "../services/api"
-import { GeneralApiProblem } from "app/services/api/apiProblem"
-import { translate } from "../i18n"
+import { api } from "../services/api"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
@@ -17,7 +15,6 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const [authPassword, setAuthPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [loginError, setLoginError] = useState("")
   const [attemptsCount, setAttemptsCount] = useState(0)
   const {
     authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
@@ -25,13 +22,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
 
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields. Like, a "save my username" functionality??
-    /*
+    // and pre-fill the form fields.
     setAuthEmail("ignite@infinite.red")
     setAuthPassword("ign1teIsAwes0m3")
-    */
-    setAuthEmail("paul.lindquist@gmail.com")
-    setAuthPassword("1234")
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
@@ -42,37 +35,24 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
 
   const error = isSubmitted ? validationError : ""
 
-  function isTokenResponse(
-    response: GeneralApiProblem | ApiTokenResponse,
-  ): response is ApiTokenResponse {
-    return (response as ApiTokenResponse).token !== undefined
-  }
-
-  function handleGeneralApiProblem(response: GeneralApiProblem): string {
-    if (response.kind === "unauthorized") {
-      setAttemptsCount(attemptsCount + 1)
-      return translate("loginScreen.unauthorized")
-    } else {
-      return translate("loginScreen.serverDown")
-    }
-  }
-
-  async function login() {
+  function login() {
     setIsSubmitted(true)
-    setLoginError("")
+    setAttemptsCount(attemptsCount + 1)
 
     if (validationError) return
 
-    const response = await api.login(authEmail, authPassword)
+    api.login(authEmail, authPassword)
+    /*
+
     // Make a request to your server to get an authentication token.
     // If successful, reset the fields and set the token.
     setIsSubmitted(false)
     setAuthPassword("")
-    if (isTokenResponse(response)) {
-      setAuthToken(response.token)
-    } else {
-      setLoginError(handleGeneralApiProblem(response))
-    }
+    setAuthEmail("")
+
+    // We'll mock this with a fake token.
+    setAuthToken(String(Date.now()))
+    */
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -100,11 +80,6 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn} />
       <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} />
       {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
-      {loginError && (
-        <Text size="sm" weight="light" style={$hint}>
-          {loginError}
-        </Text>
-      )}
 
       <TextField
         value={authEmail}
@@ -143,8 +118,6 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         preset="reversed"
         onPress={login}
       />
-      <Text tx="loginScreen.noAccount"></Text>
-      <Text tx="loginScreen.registerHere"></Text>
     </Screen>
   )
 })

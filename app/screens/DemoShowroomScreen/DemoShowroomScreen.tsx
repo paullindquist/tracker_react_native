@@ -11,6 +11,7 @@ import { useSafeAreaInsetsStyle } from "../../utils/useSafeAreaInsetsStyle"
 import * as Demos from "./demos"
 import { DrawerIconButton } from "./DrawerIconButton"
 import { useStores } from "../../models"
+import { api } from "../../services/api"
 
 const logo = require("../../../assets/images/logo.png")
 
@@ -119,6 +120,12 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
       logout()
     }
 
+    const postSetting = async () => {
+      console.log("made it her!!!")
+      const whatever = await api.getSetting()
+      console.log("WHATEVER", whatever)
+    }
+
     const handleScroll = (sectionIndex: number, itemIndex = 0) => {
       listRef.current?.scrollToLocation({
         animated: true,
@@ -184,6 +191,7 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
           <DrawerIconButton onPress={toggleDrawer} />
 
           <Button onPress={doLogout}>Logout</Button>
+          <Button onPress={postSetting}>Setting!</Button>
 
           <SectionList
             ref={listRef}

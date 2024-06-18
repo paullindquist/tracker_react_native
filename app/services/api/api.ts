@@ -11,7 +11,7 @@ import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
 import type { ApiConfig, ApiFeedResponse, ApiSubjectResponse, ApiTokenResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import type { SubjectSnapshotIn } from "../../models/subject/Subject"
-import { getUniqueId } from "react-native-device-info"
+import type { User } from "../../models/user/User"
 
 /**
  * Configuring the apisauce instance.
@@ -34,13 +34,76 @@ export class Api {
    */
   constructor(config: ApiConfig = DEFAULT_API_CONFIG) {
     this.config = config
+    const headers = {
+      Accept: "application/json",
+    }
     this.apisauce = create({
       baseURL: this.config.url,
       timeout: this.config.timeout,
-      headers: {
-        Accept: "application/json",
-      },
+      headers,
     })
+  }
+
+  /**
+   * Gets the currently logged in user
+   */
+  async getSetting(): Promise<{ kind: "ok"; setting: Setting } | GeneralApiProblem> {
+    const response: ApiResponse<ApiFeedResponse> = await this.apisauce.post(`api/setting`, {
+      settingName: "sdkfjasdlfjasdlfkjas;flkasw",
+    })
+
+    console.log("response: " + JSON.stringify(response, null, 2))
+    // the typical ways to die when calling an api
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // transform the data into the format we are expecting
+    try {
+      const rawData = response.data
+      if (rawData) {
+        const user = rawData
+        console.log("RAWDATA", rawData)
+        return { kind: "ok", user }
+      }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+    return { kind: "unknown", temporary: true }
+  }
+
+  /**
+   * Gets the currently logged in user
+   */
+  async getUser(): Promise<{ kind: "ok"; user: User } | GeneralApiProblem> {
+    // make the api call
+    const response: ApiResponse<ApiUserResponse> = await this.apisauce.get(`api/user`)
+
+    console.log("response: " + response)
+    // the typical ways to die when calling an api
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // transform the data into the format we are expecting
+    try {
+      const rawData = response.data
+      if (rawData) {
+        const user = rawData
+        console.log("RAWDATA", rawData)
+        return { kind: "ok", user }
+      }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
   }
 
   /**
@@ -113,25 +176,26 @@ export class Api {
   }
 
   async login(email: string, password: string): Promise<GeneralApiProblem | ApiTokenResponse> {
-    // make the api call
     try {
-      console.log("attempting to login")
-      const deviceId = getUniqueId()
-      console.log("DEVICEID", deviceId)
       const response: ApiResponse<ApiTokenResponse> = await this.apisauce.post(`api/login`, {
         email,
         password,
-        deviceId,
       })
-      console.log("attempted to login?")
-      console.log("response:", response)
-      if (response.data?.token) {
-        return { token: response.data.token }
+      console.log("login response:", JSON.stringify(response, null, 2))
+      if (response) {
+        if (response.data?.token) {
+          return { token: response.data.token }
+        } else {
+          const apiProblem = getGeneralApiProblem(response)
+          if (apiProblem) {
+            return apiProblem
+          }
+        }
       }
     } catch (e) {
       console.error("Failed to login:", e)
     }
-    return { kind: "rejected" }
+    return { kind: "unknown", temporary: true }
   }
 }
 

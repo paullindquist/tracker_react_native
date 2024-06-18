@@ -21,7 +21,7 @@ export const SubjectListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = obse
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
-        await subjectStore.fetchSubjects()
+        // await subjectStore.fetchSubjects()
         setIsLoading(false)
       })()
     }, [subjectStore])

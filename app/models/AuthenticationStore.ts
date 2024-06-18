@@ -22,6 +22,7 @@ export const AuthenticationStoreModel = types
   .actions((store) => ({
     setAuthToken(value?: string) {
       store.authToken = value
+      console.log("SETTING BEARER TOKEN TO: ", value)
       api.apisauce.setHeader("Authorization", `Bearer ${value}`)
     },
     setAuthEmail(value: string) {

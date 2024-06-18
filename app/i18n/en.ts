@@ -38,9 +38,12 @@ const en = {
     emailFieldPlaceholder: "Enter your email address",
     passwordFieldPlaceholder: "Super secret password here",
     tapToSignIn: "Tap to sign in!",
-    hint: "Hint: you can use any email address and your favorite password :)",
+    unauthorized: "You have entered an invalid email or password",
+    serverDown:
+      "Looks like our login system is on a timeout. We're getting it back in the game. Please try again shortly, and let us know if this is still happening.",
+    hint: "Hint: you have X many more times to try before something bad happens :)",
     noAccount: "Don't have an account?",
-    registerHere: "Register here"
+    registerHere: "Register here",
   },
   demoNavigator: {
     componentsTab: "Components",
@@ -72,7 +75,7 @@ const en = {
     hireUsLink: "Send us a message",
   },
   demoShowroomScreen: {
-    jumpStart: "Components to jump start your project!",
+    jumpStart: "demoShowroomScreen",
     lorem2Sentences:
       "Nulla cupidatat deserunt amet quis aliquip nostrud do adipisicing. Adipisicing excepteur elit laborum Lorem adipisicing do duis.",
     demoHeaderTxExample: "Yay",

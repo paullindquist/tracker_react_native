@@ -33,6 +33,11 @@ export interface ApiSubjectResponse {
 
 export interface ApiTokenResponse {
   token: string
+  message?: string
+}
+
+export interface ApiUserResponse {
+  user: User
 }
 
 export interface ApiFeedResponse {
