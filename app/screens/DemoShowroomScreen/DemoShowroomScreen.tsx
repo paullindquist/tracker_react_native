@@ -12,6 +12,8 @@ import * as Demos from "./demos"
 import { DrawerIconButton } from "./DrawerIconButton"
 import { useStores } from "../../models"
 import { api } from "../../services/api"
+import Toast from "react-native-toast-message"
+import CreateSubject from "app/components/subject/CreateSubject"
 
 const logo = require("../../../assets/images/logo.png")
 
@@ -85,6 +87,7 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
     const {
       authenticationStore: { logout },
     } = useStores()
+    const [input, setInput] = useState("")
 
     // handle Web links
     React.useEffect(() => {
@@ -121,9 +124,16 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
     }
 
     const postSetting = async () => {
-      console.log("made it her!!!")
-      const whatever = await api.getSetting()
-      console.log("WHATEVER", whatever)
+      try {
+        const whatever = await api.getSetting()
+        console.log("WHATEVER", whatever)
+      } catch (e) {
+        Toast.show({
+          type: "success",
+          text1: "Hello",
+          text2: "👋" + " " + e.message,
+        })
+      }
     }
 
     const handleScroll = (sectionIndex: number, itemIndex = 0) => {
@@ -192,31 +202,8 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
 
           <Button onPress={doLogout}>Logout</Button>
           <Button onPress={postSetting}>Setting!</Button>
-
-          <SectionList
-            ref={listRef}
-            contentContainerStyle={$sectionListContentContainer}
-            stickySectionHeadersEnabled={false}
-            sections={Object.values(Demos)}
-            renderItem={({ item }) => item}
-            renderSectionFooter={() => <View style={$demoUseCasesSpacer} />}
-            ListHeaderComponent={
-              <View style={$heading}>
-                <Text preset="heading" tx="demoShowroomScreen.jumpStart" />
-              </View>
-            }
-            onScrollToIndexFailed={scrollToIndexFailed}
-            renderSectionHeader={({ section }) => {
-              return (
-                <View>
-                  <Text preset="heading" style={$demoItemName}>
-                    {section.name}
-                  </Text>
-                  <Text style={$demoItemDescription}>{section.description}</Text>
-                </View>
-              )
-            }}
-          />
+          <CreateSubject />
+          <Toast />
         </Screen>
       </Drawer>
     )

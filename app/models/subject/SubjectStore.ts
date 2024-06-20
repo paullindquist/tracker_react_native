@@ -1,14 +1,12 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../../services/api"
-import { Subject, SubjectModel } from "../subject/Subject"
+import { SubjectModel } from "../subject/Subject"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 
 export const SubjectStoreModel = types
   .model("SubjectStore")
   .props({
     subjects: types.array(SubjectModel),
-    favorites: types.array(types.reference(SubjectModel)),
-    favoritesOnly: false,
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -24,31 +22,12 @@ export const SubjectStoreModel = types
       }
       */
     },
-    addFavorite(subject: Subject) {
-      store.favorites.push(subject)
-    },
-    removeFavorite(subject: Subject) {
-      store.favorites.remove(subject)
+    async createSubject() {
+      console.log("ATTEMPTING TO create a SUBJECT")
     },
   }))
-  .views((store) => ({
-    get subjectsForList() {
-      return store.favoritesOnly ? store.favorites : store.subjects
-    },
-
-    hasFavorite(subject: Subject) {
-      return store.favorites.includes(subject)
-    },
-  }))
-  .actions((store) => ({
-    toggleFavorite(subject: Subject) {
-      if (store.hasFavorite(subject)) {
-        store.removeFavorite(subject)
-      } else {
-        store.addFavorite(subject)
-      }
-    },
-  }))
+  .views((store) => ({}))
+  .actions((store) => ({}))
 
 export interface SubjectStore extends Instance<typeof SubjectStoreModel> {}
 export interface SubjectStoreSnapshot extends SnapshotOut<typeof SubjectStoreModel> {}

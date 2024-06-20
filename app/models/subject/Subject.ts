@@ -9,7 +9,7 @@ import { translate } from "../../i18n"
 export const SubjectModel = types
   .model("Subject")
   .props({
-    guid: types.identifier,
+    id: types.maybeNull(types.string),
     name_first: "",
     name_last: "",
     dob: "",

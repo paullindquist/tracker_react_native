@@ -8,10 +8,11 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiFeedResponse, ApiSubjectResponse, ApiTokenResponse } from "./api.types"
+import type { ApiConfig, ApiFeedResponse, ApiSubjectsResponse, ApiTokenResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import type { SubjectSnapshotIn } from "../../models/subject/Subject"
 import type { User } from "../../models/user/User"
+import type { SettingSnapshotIn } from "app/models/setting/Setting"
 
 /**
  * Configuring the apisauce instance.
@@ -47,10 +48,8 @@ export class Api {
   /**
    * Gets the currently logged in user
    */
-  async getSetting(): Promise<{ kind: "ok"; setting: Setting } | GeneralApiProblem> {
-    const response: ApiResponse<ApiFeedResponse> = await this.apisauce.post(`api/setting`, {
-      settingName: "sdkfjasdlfjasdlfkjas;flkasw",
-    })
+  async getSetting(): Promise<{ kind: "ok"; settings: SettingSnapshotIn[] } | GeneralApiProblem> {
+    const response: ApiResponse<ApiFeedResponse> = await this.apisauce.get(`api/settings`)
 
     console.log("response: " + JSON.stringify(response, null, 2))
     // the typical ways to die when calling an api
@@ -104,6 +103,7 @@ export class Api {
       }
       return { kind: "bad-data" }
     }
+    return { kind: "unknown", temporary: true }
   }
 
   /**
@@ -144,7 +144,7 @@ export class Api {
   async getSubjects(): Promise<{ kind: "ok"; subjects: SubjectSnapshotIn[] } | GeneralApiProblem> {
     // make the api call
     try {
-      const response: ApiResponse<ApiSubjectResponse> = await this.apisauce.get(`subjects.json`)
+      const response: ApiResponse<ApiSubjectsResponse> = await this.apisauce.get(`/api/subjects`)
 
       // the typical ways to die when calling an api
       if (!response.ok) {
@@ -196,6 +196,41 @@ export class Api {
       console.error("Failed to login:", e)
     }
     return { kind: "unknown", temporary: true }
+  }
+
+  async createSubject(
+    subject: SubjectSnapshotIn,
+  ): Promise<{ kind: "ok"; subject: SubjectSnapshotIn } | GeneralApiProblem> {
+    try {
+      const response: ApiResponse<ApiSubjectsResponse> = await this.apisauce.post(
+        `/api/subjects`,
+        subject,
+      )
+
+      // the typical ways to die when calling an api
+      if (!response.ok) {
+        const problem = getGeneralApiProblem(response)
+        if (problem) return problem
+      }
+
+      // transform the data into the format we are expecting
+      try {
+        const rawData = response.data
+
+        // This is where we transform the data into the shape we expect for our MST model.
+        const createdSubject: SubjectSnapshotIn = rawData?.subject
+
+        return { kind: "ok", subject: createdSubject }
+      } catch (e) {
+        if (__DEV__ && e instanceof Error) {
+          console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+        }
+        return { kind: "bad-data" }
+      }
+    } catch (e) {
+      console.log("foo", e)
+    }
+    return { kind: "rejected" }
   }
 }
 

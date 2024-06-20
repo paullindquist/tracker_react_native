@@ -22,13 +22,17 @@ export interface EpisodeItem {
 }
 
 export interface SubjectItem {
-  guid: string
   name_first: string
   name_last: string
+  image_href: string
+}
+
+export interface ApiSubjectsResponse {
+  subjects: SubjectItem[]
 }
 
 export interface ApiSubjectResponse {
-  subjects: SubjectItem[]
+  subjects: SubjectItem
 }
 
 export interface ApiTokenResponse {
