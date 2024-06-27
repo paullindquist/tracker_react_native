@@ -126,6 +126,15 @@ const en = {
   subjectListScreen: {
     title: "Subjects:",
   },
+  subjectCreate: {
+    nameLabel: "First name",
+    namePlaceholder: "Enter a first name",
+    nameHelper: "Enter a first name",
+  },
+  subjectList: {
+    heading: "Here's a list of subjects, for ya.",
+    emptyList: "Looks like there are no subjects yet?",
+  },
 }
 
 export default en

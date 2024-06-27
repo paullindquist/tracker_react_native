@@ -3,7 +3,7 @@ import React, { FC, ReactElement, useEffect, useRef, useState } from "react"
 import { Image, ImageStyle, Platform, SectionList, TextStyle, View, ViewStyle } from "react-native"
 import { Drawer } from "react-native-drawer-layout"
 import { type ContentStyle } from "@shopify/flash-list"
-import { ListItem, ListView, ListViewRef, Screen, Text, Button } from "../../components"
+import { ListItem, ListView, ListViewRef, Screen, Text, Button, Card } from "../../components"
 import { isRTL } from "../../i18n"
 import { DemoTabParamList, DemoTabScreenProps } from "../../navigators/DemoNavigator"
 import { colors, spacing } from "../../theme"
@@ -14,6 +14,7 @@ import { useStores } from "../../models"
 import { api } from "../../services/api"
 import Toast from "react-native-toast-message"
 import CreateSubject from "app/components/subject/CreateSubject"
+import SubjectList from "app/components/subject/SubjectList"
 
 const logo = require("../../../assets/images/logo.png")
 
@@ -87,7 +88,6 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
     const {
       authenticationStore: { logout },
     } = useStores()
-    const [input, setInput] = useState("")
 
     // handle Web links
     React.useEffect(() => {
@@ -180,7 +180,6 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
             <View style={$logoContainer}>
               <Image source={logo} style={$logoImage} />
             </View>
-
             <ListView<DemoListItem["item"]>
               ref={menuRef}
               contentContainerStyle={$listContentContainer}
@@ -197,11 +196,13 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
           </View>
         )}
       >
-        <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContainer}>
+        <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$screenContainer}>
           <DrawerIconButton onPress={toggleDrawer} />
 
           <Button onPress={doLogout}>Logout</Button>
           <Button onPress={postSetting}>Setting!</Button>
+
+          <SubjectList />
           <CreateSubject />
           <Toast />
         </Screen>
@@ -211,6 +212,8 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
 
 const $screenContainer: ViewStyle = {
   flex: 1,
+  paddingTop: spacing.lg + spacing.xl,
+  paddingHorizontal: spacing.lg,
 }
 
 const $drawer: ViewStyle = {

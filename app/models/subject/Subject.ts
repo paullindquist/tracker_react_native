@@ -9,10 +9,14 @@ import { translate } from "../../i18n"
 export const SubjectModel = types
   .model("Subject")
   .props({
-    id: types.maybeNull(types.string),
-    name_first: "",
-    name_last: "",
-    dob: "",
+    id: types.number,
+    name_first: types.string,
+    name_last: types.maybeNull(types.string),
+    birth_date: types.maybeNull(types.string),
+    image_href: types.maybeNull(types.string),
+    created_at: types.string,
+    updated_at: types.string,
+    deleted_at: types.maybeNull(types.string),
   })
   .actions(withSetPropAction)
   .views((subject) => ({

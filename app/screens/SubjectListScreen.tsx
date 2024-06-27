@@ -2,8 +2,8 @@ import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
 import { ActivityIndicator, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
-import { Card, EmptyState, ListView, Screen, Text, Button } from "../components"
-import { isRTL, translate } from "../i18n"
+import { Card, EmptyState, ListView, Screen, Text } from "../components"
+import { isRTL } from "../i18n"
 import { useStores } from "../models"
 import { Subject } from "../models/subject/Subject"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
@@ -21,7 +21,7 @@ export const SubjectListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = obse
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
-        // await subjectStore.fetchSubjects()
+        await subjectStore.fetchSubjects()
         setIsLoading(false)
       })()
     }, [subjectStore])

@@ -1,11 +1,11 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../../services/api"
-// import { User, UserModel } from "../user/User"
+import { UserModel } from "../user/User"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 
 export const UserStoreModel = types
   .model("UserStore")
-  .props({})
+  .props({ user: types.maybe(UserModel) })
   .actions(withSetPropAction)
   .actions((store) => ({
     async fetchUser() {

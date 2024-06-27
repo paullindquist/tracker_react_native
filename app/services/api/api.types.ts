@@ -41,7 +41,7 @@ export interface ApiTokenResponse {
 }
 
 export interface ApiUserResponse {
-  user: User
+  user: any
 }
 
 export interface ApiFeedResponse {

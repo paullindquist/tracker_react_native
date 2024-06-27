@@ -12,7 +12,6 @@ export const SubjectStoreModel = types
   .actions((store) => ({
     async fetchSubjects() {
       console.log("ATTEMPTING TO FETCH SUBJECTS, but it's commented out")
-      /*
       const response = await api.getSubjects()
       if (response.kind === "ok") {
         console.log("SUBJECTS: ", response)
@@ -20,13 +19,16 @@ export const SubjectStoreModel = types
       } else {
         console.error(`Error fetching subjects!!!!: ${JSON.stringify(response)}`)
       }
-      */
     },
     async createSubject() {
       console.log("ATTEMPTING TO create a SUBJECT")
     },
   }))
-  .views((store) => ({}))
+  .views((store) => ({
+    get subjectsForList() {
+      return store.subjects
+    },
+  }))
   .actions((store) => ({}))
 
 export interface SubjectStore extends Instance<typeof SubjectStoreModel> {}

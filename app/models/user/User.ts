@@ -1,18 +1,15 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
-import { formatDate } from "../../utils/formatDate"
-import { translate } from "../../i18n"
 
-/**
- * This represents the logged in user
- */
 export const UserModel = types
   .model("User")
   .props({
-    guid: types.identifier,
-    name_first: "",
-    name_last: "",
-    dob: "",
+    id: types.number,
+    name: types.string,
+    email: types.string,
+    email_verified_at: types.maybeNull(types.string),
+    created_at: types.string,
+    updated_at: types.string,
   })
   .actions(withSetPropAction)
   .views(() => ({}))

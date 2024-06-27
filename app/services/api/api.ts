@@ -8,11 +8,18 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiFeedResponse, ApiSubjectsResponse, ApiTokenResponse } from "./api.types"
+import type {
+  ApiConfig,
+  ApiFeedResponse,
+  ApiSubjectsResponse,
+  ApiTokenResponse,
+  ApiUserResponse,
+} from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import type { SubjectSnapshotIn } from "../../models/subject/Subject"
-import type { User } from "../../models/user/User"
+import type { UserSnapshotIn } from "../../models/user/User"
 import type { SettingSnapshotIn } from "app/models/setting/Setting"
+import { SubjectItem } from "../api/api.types"
 
 /**
  * Configuring the apisauce instance.
@@ -78,7 +85,7 @@ export class Api {
   /**
    * Gets the currently logged in user
    */
-  async getUser(): Promise<{ kind: "ok"; user: User } | GeneralApiProblem> {
+  async getUser(): Promise<{ kind: "ok"; user: UserSnapshotIn } | GeneralApiProblem> {
     // make the api call
     const response: ApiResponse<ApiUserResponse> = await this.apisauce.get(`api/user`)
 
@@ -154,14 +161,12 @@ export class Api {
 
       // transform the data into the format we are expecting
       try {
-        const rawData = response.data
-
-        // This is where we transform the data into the shape we expect for our MST model.
-        const subjects: SubjectSnapshotIn[] =
-          rawData?.subjects.map((raw) => ({
-            ...raw,
-          })) ?? []
-
+        let subjects: SubjectItem[]
+        if (response.data?.subjects) {
+          subjects = response.data.subjects
+        } else {
+          subjects = []
+        }
         return { kind: "ok", subjects }
       } catch (e) {
         if (__DEV__ && e instanceof Error) {
@@ -181,6 +186,26 @@ export class Api {
         email,
         password,
       })
+      console.log("login response:", JSON.stringify(response, null, 2))
+      if (response) {
+        if (response.data?.token) {
+          return { token: response.data.token }
+        } else {
+          const apiProblem = getGeneralApiProblem(response)
+          if (apiProblem) {
+            return apiProblem
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to login:", e)
+    }
+    return { kind: "unknown", temporary: true }
+  }
+
+  async refresh(): Promise<GeneralApiProblem | ApiTokenResponse> {
+    try {
+      const response: ApiResponse<ApiTokenResponse> = await this.apisauce.post(`api/refreshToken`)
       console.log("login response:", JSON.stringify(response, null, 2))
       if (response) {
         if (response.data?.token) {
