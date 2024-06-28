@@ -37,10 +37,14 @@ const SubjectList: React.FC = () => {
         ListEmptyComponent={isLoading ? <ActivityIndicator /> : <Text>No dice?</Text>}
         ListHeaderComponent={
           <View style={$heading}>
-            <Text preset="heading" tx="demoPodcastListScreen.title" />
+            <Text preset="heading" tx="subjectList.heading" />
           </View>
         }
-        renderItem={({ item }) => <Text>{item.name_first}</Text>}
+        renderItem={({ item }) => (
+          <Text>
+            {item.name_first} -- {item.name_last}
+          </Text>
+        )}
       />
       <Text>Subject List</Text>
     </View>

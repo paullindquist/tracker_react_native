@@ -81,7 +81,8 @@ const SubjectCard = observer(function SubjectCard({ subject }: { subject: Subjec
       HeadingComponent={
         <View>
           <Text size="sm">{subject.name_first}</Text>
-          <Text>{subject.name_last}</Text>
+          <Text>{subject.name_first}!</Text>
+          <Text>{subject.name_last}!</Text>
         </View>
       }
     />

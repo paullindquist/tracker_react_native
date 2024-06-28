@@ -3,7 +3,7 @@ import React, { FC, ReactElement, useEffect, useRef, useState } from "react"
 import { Image, ImageStyle, Platform, SectionList, TextStyle, View, ViewStyle } from "react-native"
 import { Drawer } from "react-native-drawer-layout"
 import { type ContentStyle } from "@shopify/flash-list"
-import { ListItem, ListView, ListViewRef, Screen, Text, Button, Card } from "../../components"
+import { ListItem, ListView, ListViewRef, Screen, Text } from "../../components"
 import { isRTL } from "../../i18n"
 import { DemoTabParamList, DemoTabScreenProps } from "../../navigators/DemoNavigator"
 import { colors, spacing } from "../../theme"
@@ -198,10 +198,6 @@ export const DemoShowroomScreen: FC<DemoTabScreenProps<"DemoShowroom">> =
       >
         <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$screenContainer}>
           <DrawerIconButton onPress={toggleDrawer} />
-
-          <Button onPress={doLogout}>Logout</Button>
-          <Button onPress={postSetting}>Setting!</Button>
-
           <SubjectList />
           <CreateSubject />
           <Toast />
