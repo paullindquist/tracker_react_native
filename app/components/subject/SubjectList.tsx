@@ -27,6 +27,7 @@ const SubjectList: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <pre>{subjectStore.subjectsForList.length}</pre>
       <ListView<Subject>
         contentContainerStyle={$listContentContainer}
         data={subjectStore.subjectsForList.slice()}

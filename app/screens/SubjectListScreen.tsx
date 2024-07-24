@@ -2,15 +2,16 @@ import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
 import { ActivityIndicator, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
-import { Card, EmptyState, ListView, Screen, Text } from "../components"
+import { Card, EmptyState, ListView, Screen, Text, Button } from "../components"
 import { isRTL } from "../i18n"
 import { useStores } from "../models"
 import { Subject } from "../models/subject/Subject"
-import { DemoTabScreenProps } from "../navigators/DemoNavigator"
+import { TabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
+import { api } from "../services/api/api"
 
-export const SubjectListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = observer(
+export const SubjectListScreen: FC<TabScreenProps<"DemoPodcastList">> = observer(
   function SubjectListScreen(_props) {
     const { subjectStore } = useStores()
 
@@ -35,7 +36,7 @@ export const SubjectListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = obse
 
     return (
       <Screen
-        preset="fixed"
+        preset="scroll"
         safeAreaEdges={["top"]}
         contentContainerStyle={$screenContentContainer}
       >
@@ -74,15 +75,19 @@ export const SubjectListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = obse
 )
 
 const SubjectCard = observer(function SubjectCard({ subject }: { subject: Subject }) {
+  async function handleSubmit() {
+    console.log("made it here")
+  }
+
   return (
     <Card
       style={$item}
       verticalAlignment="force-footer-bottom"
       HeadingComponent={
         <View>
-          <Text size="sm">{subject.name_first}</Text>
-          <Text>{subject.name_first}!</Text>
-          <Text>{subject.name_last}!</Text>
+          <Text size="lg">{subject.name_first}</Text>
+          <Text size="lg">{subject.id}</Text>
+          <Button onPress={handleSubmit}>Delete</Button>
         </View>
       }
     />

@@ -16,7 +16,7 @@ import type {
   ApiUserResponse,
 } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
-import type { SubjectSnapshotIn } from "../../models/subject/Subject"
+import type { SubjectSnapshotIn, SubjectSnapshotOut } from "../../models/subject/Subject"
 import type { UserSnapshotIn } from "../../models/user/User"
 import type { SettingSnapshotIn } from "app/models/setting/Setting"
 import { SubjectItem } from "../api/api.types"
@@ -148,38 +148,6 @@ export class Api {
     }
   }
 
-  async getSubjects(): Promise<{ kind: "ok"; subjects: SubjectSnapshotIn[] } | GeneralApiProblem> {
-    // make the api call
-    try {
-      const response: ApiResponse<ApiSubjectsResponse> = await this.apisauce.get(`/api/subjects`)
-
-      // the typical ways to die when calling an api
-      if (!response.ok) {
-        const problem = getGeneralApiProblem(response)
-        if (problem) return problem
-      }
-
-      // transform the data into the format we are expecting
-      try {
-        let subjects: SubjectItem[]
-        if (response.data?.subjects) {
-          subjects = response.data.subjects
-        } else {
-          subjects = []
-        }
-        return { kind: "ok", subjects }
-      } catch (e) {
-        if (__DEV__ && e instanceof Error) {
-          console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
-        }
-        return { kind: "bad-data" }
-      }
-    } catch (e) {
-      console.log("foo", e)
-    }
-    return { kind: "rejected" }
-  }
-
   async login(email: string, password: string): Promise<GeneralApiProblem | ApiTokenResponse> {
     try {
       const response: ApiResponse<ApiTokenResponse> = await this.apisauce.post(`api/login`, {
@@ -223,6 +191,36 @@ export class Api {
     return { kind: "unknown", temporary: true }
   }
 
+  async getSubjects(): Promise<{ kind: "ok"; subjects: SubjectSnapshotOut[] } | GeneralApiProblem> {
+    try {
+      const response: ApiResponse<ApiSubjectsResponse> = await this.apisauce.get(`/api/subjects`)
+
+      if (!response.ok) {
+        const problem = getGeneralApiProblem(response)
+        if (problem) return problem
+      }
+
+      // transform the data into the format we are expecting
+      try {
+        let subjects: SubjectSnapshotOut[]
+        if (response.data?.subjects) {
+          subjects = response.data.subjects
+        } else {
+          subjects = []
+        }
+        return { kind: "ok", subjects }
+      } catch (e) {
+        if (__DEV__ && e instanceof Error) {
+          console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+        }
+        return { kind: "bad-data" }
+      }
+    } catch (e) {
+      console.log("Error: getSubjects()", e)
+    }
+    return { kind: "rejected" }
+  }
+
   async createSubject(
     subject: SubjectSnapshotIn,
   ): Promise<{ kind: "ok"; subject: SubjectSnapshotIn } | GeneralApiProblem> {
@@ -232,6 +230,42 @@ export class Api {
         subject,
       )
 
+      // the typical ways to die when calling an api
+      if (!response.ok) {
+        const problem = getGeneralApiProblem(response)
+        if (problem) return problem
+      }
+
+      // transform the data into the format we are expecting
+      try {
+        const rawData = response.data
+
+        // This is where we transform the data into the shape we expect for our MST model.
+        const createdSubject: SubjectSnapshotIn = rawData?.subject
+
+        return { kind: "ok", subject: createdSubject }
+      } catch (e) {
+        if (__DEV__ && e instanceof Error) {
+          console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+        }
+        return { kind: "bad-data" }
+      }
+    } catch (e) {
+      console.log("foo", e)
+    }
+    return { kind: "rejected" }
+  }
+
+  async deleteSubject(
+    subject: SubjectSnapshotIn,
+  ): Promise<{ kind: "ok"; subject: SubjectSnapshotIn } | GeneralApiProblem> {
+    try {
+      const response: ApiResponse<ApiSubjectsResponse> = await this.apisauce.delete(
+        `/api/subjects`,
+        subject,
+      )
+
+      // TODO: THIS!!!!
       // the typical ways to die when calling an api
       if (!response.ok) {
         const problem = getGeneralApiProblem(response)

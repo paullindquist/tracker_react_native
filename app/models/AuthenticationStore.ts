@@ -23,6 +23,7 @@ export const AuthenticationStoreModel = types
     setAuthToken(value?: string) {
       store.authToken = value
       api.apisauce.setHeader("Authorization", `Bearer ${value}`)
+      console.debug("JUST SET THA TOKEN~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     },
     setAuthEmail(value: string) {
       store.authEmail = value.replace(/ /g, "")

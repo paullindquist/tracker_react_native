@@ -11,10 +11,8 @@ export const SubjectStoreModel = types
   .actions(withSetPropAction)
   .actions((store) => ({
     async fetchSubjects() {
-      console.log("ATTEMPTING TO FETCH SUBJECTS, but it's commented out")
       const response = await api.getSubjects()
       if (response.kind === "ok") {
-        console.log("SUBJECTS: ", response)
         store.setProp("subjects", response.subjects)
       } else {
         console.error(`Error fetching subjects!!!!: ${JSON.stringify(response)}`)
@@ -26,6 +24,7 @@ export const SubjectStoreModel = types
   }))
   .views((store) => ({
     get subjectsForList() {
+      console.log("subjectsForList", store.subjects)
       return store.subjects
     },
   }))

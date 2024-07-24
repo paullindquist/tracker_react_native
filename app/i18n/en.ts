@@ -135,6 +135,12 @@ const en = {
     heading: "Here's a list of subjects, for ya.",
     emptyList: "Looks like there are no subjects yet?",
   },
+  trackerNavigator: {
+    subjectsTab: "Subjects",
+    debugTab: "Debug",
+    communityTab: "Community",
+    podcastListTab: "Podcast",
+  },
 }
 
 export default en
